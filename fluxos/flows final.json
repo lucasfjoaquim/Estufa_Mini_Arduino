@@ -1,0 +1,116 @@
+[
+    {
+        "id": "790ea3b1a1c17994",
+        "type": "tab",
+        "label": "Fluxo 4",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e3ba257a.120ef8",
+        "type": "json",
+        "z": "790ea3b1a1c17994",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 550,
+        "y": 360,
+        "wires": [
+            [
+                "f51c89c5908a6b49",
+                "482ae1df24e4e0af"
+            ]
+        ]
+    },
+    {
+        "id": "9114e33e.d251f",
+        "type": "serial in",
+        "z": "790ea3b1a1c17994",
+        "name": "",
+        "serial": "250124fe.5ce29c",
+        "x": 430,
+        "y": 360,
+        "wires": [
+            [
+                "e3ba257a.120ef8"
+            ]
+        ]
+    },
+    {
+        "id": "f51c89c5908a6b49",
+        "type": "debug",
+        "z": "790ea3b1a1c17994",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "482ae1df24e4e0af",
+        "type": "http request",
+        "z": "790ea3b1a1c17994",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:80/api/create/plant/info",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 740,
+        "y": 360,
+        "wires": [
+            [
+                "ca60339e732fa62a"
+            ]
+        ]
+    },
+    {
+        "id": "ca60339e732fa62a",
+        "type": "debug",
+        "z": "790ea3b1a1c17994",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "250124fe.5ce29c",
+        "type": "serial-port",
+        "serialport": "COM4",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "false",
+        "responsetimeout": ""
+    }
+]

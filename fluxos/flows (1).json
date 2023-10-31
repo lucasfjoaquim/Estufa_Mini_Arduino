@@ -1,0 +1,147 @@
+[
+    {
+        "id": "333669f0fdda8653",
+        "type": "tab",
+        "label": "Fluxo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "3b824234ebbe899b",
+        "type": "inject",
+        "z": "333669f0fdda8653",
+        "name": "COM1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"temp\":25,\"humi\":75,\"light\":700,\"ph\":7.5,\"plant_id\":2}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8278463943d3a426",
+        "type": "serial in",
+        "z": "333669f0fdda8653",
+        "name": "COM1",
+        "serial": "78a44b5056332dbe",
+        "x": 150,
+        "y": 320,
+        "wires": [
+            [
+                "1b33078b2769cdc3"
+            ]
+        ]
+    },
+    {
+        "id": "1b33078b2769cdc3",
+        "type": "json",
+        "z": "333669f0fdda8653",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 330,
+        "y": 240,
+        "wires": [
+            [
+                "f9bae81501592e31"
+            ]
+        ]
+    },
+    {
+        "id": "f9bae81501592e31",
+        "type": "function",
+        "z": "333669f0fdda8653",
+        "name": "function 2",
+        "func": "// Receba a mensagem de entrada\nvar mensagem = msg.payload;\n\nmensagem.luz = mensagem.luz / 7;\n\n// Envie a mensagem de saída\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 240,
+        "wires": [
+            [
+                "e8e5c80dc0b3b745"
+            ]
+        ]
+    },
+    {
+        "id": "25ad1730e1c94876",
+        "type": "debug",
+        "z": "333669f0fdda8653",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "e8e5c80dc0b3b745",
+        "type": "http request",
+        "z": "333669f0fdda8653",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:80/api/create/plant/info",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 700,
+        "y": 240,
+        "wires": [
+            [
+                "25ad1730e1c94876"
+            ]
+        ]
+    },
+    {
+        "id": "78a44b5056332dbe",
+        "type": "serial-port",
+        "serialport": "COM1",
+        "serialbaud": "57600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    }
+]
