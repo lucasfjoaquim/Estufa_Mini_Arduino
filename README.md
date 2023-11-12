@@ -8,7 +8,10 @@
 </div>
 
 ## Sobre o projeto
-
+<div style="display: flex; justify-content: space-between;">
+    <img src="images/pictures/1.jpeg" alt="Imagem 1" width="300" height="auto">
+    <img src="images/pictures/2.jpeg" alt="Imagem 2" width="300" height="auto">
+</div>
 <div>
 <p>Este é o projeto de circuito arduino controlador/sensoriamento da estufa mini.<br>
 </p>
@@ -60,67 +63,64 @@
 
 ## codigo
 ```c
-    #include <Servo.h>
+#include <DHT.h>
+#include <ArduinoJson.h>
 
-const int pinoDHT11 = A0;
-const int ldrPin = A2;
-const int servoPin1 = 9;
-const int motor = 8;
-int humiditysensorOutput = 0;
-int RawValue= 0;
-double Voltage = 0;
-double tempC = 0;
-double tempF = 0;
-int lightLevel = 0;
-int sensorPHValue = 0;
-int valor = 0;
+const int potPin = A0;
+#define MOTOR_PIN 9 
+#define DHTPIN 4     // Define a porta digital 4 como a porta de dados do sensor
+#define DHTTYPE DHT11 // Define o tipo de sensor como DHT11
+const int ldrPin = A1; // Pino A1 como entrada analógica para o sensor LDR
+DynamicJsonDocument doc(1024);
 
-Servo myservo;
 
-void setup(){  
-  Serial.begin(9600);
-  myservo.attach(servoPin1);  
-  pinMode(A1, INPUT);
+DHT dht(DHTPIN, DHTTYPE); // Inicializa o objeto DHT
+
+void setup() {
+  pinMode(MOTOR_PIN, OUTPUT);
+  int ldrValue = analogRead(ldrPin); // Lê o valor analógico do sensor LDR
+  Serial.begin(9600); // Inicializa a comunicação serial com a taxa de baud 9600
+  dht.begin();        // Inicializa o sensor DHT
 }
 
-void loop(){
-  
-  RawValue = analogRead(pinoDHT11);
-  Voltage = (RawValue / 1023.0) * 5000; 
-  tempC = (Voltage-500) * 0.1; 
-  lightLevel = analogRead(ldrPin);
-  humiditysensorOutput = analogRead(A1);
-  sensorPHValue = analogRead(A3);
-  float ph = sensorPHValue * (14.0/1023.0);
-  int servoAngle = 0;
-  if (tempC > 30){
-    valor = 130;
-    Serial.print("valor: ");
-    Serial.print(valor);
-  	servoAngle = 90;
-    analogWrite(motor,valor);
-  }
-  else {
-    valor = 0;
-  	servoAngle = 0;
-    analogWrite(motor,valor);
-  }
-  
-  myservo.write(servoAngle); 
-  
-  Serial.print("Temperature in C = ");
-  Serial.print(tempC);
-  Serial.print(" Humidity: ");
-  Serial.print(map(humiditysensorOutput, 0, 1023, 0, 100));
-  
-  Serial.print(" Light Level: ");
-  Serial.println(lightLevel);
-  
-  Serial.print("PH do solo : ");
-  Serial.println(ph);
+void loop() {
+  delay(2000); // Aguarda 2 segundos para evitar leituras frequentes
+  String data_JSON;
 
-  delay(5000);
+  float valph =  analogRead(potPin);
+  float ph = (valph / 73.00) - 7;
 
+
+  // le a quantidade de luz do ambiente
+  int ldrValue = analogRead(ldrPin); // Lê o valor analógico do sensor LDR
+
+  // Lê a umidade relativa
+  float humidity = dht.readHumidity();
+
+  // Lê a temperatura em graus Celsius
+  float temperature = dht.readTemperature();
+
+  // Verifica se a leitura do sensor foi bem-sucedida
+  if (isnan(humidity) || isnan(temperature)) {
+    Serial.println("Erro ao ler o sensor DHT!");
+  } else {
+    // Exibe os dados no monitor serial
+    doc["humi"] = humidity;
+    doc["temp"] = temperature;
+    doc["light"] = ldrValue * 15;
+    doc["ph"] = ph;
+    doc["plant_id"] = 1;
+    if (temperature > 26) {
+      // Liga o motor DC
+      digitalWrite(MOTOR_PIN, HIGH);
+    } else {
+      // Desliga o motor DC
+      digitalWrite(MOTOR_PIN, LOW);
+    }
+  serializeJson(doc, data_JSON);
+  Serial.println(data_JSON);
+  }
+  delay(1000);
 }
 ```
 ## Proposito
@@ -128,6 +128,12 @@ void loop(){
 Esse circuito tem como proposito principal o sensoriamento do ambiente da planta, isto é, capturar informações sobre a temperatura do ambiente, humidade relativa, nivel de iluminação e PH do solo. O processo de encaminhamento destes dados para a api sera realizado por um script de Python com a biblioteca <a href="https://pypi.org/project/pyserial/" >Pyserial</a>.
 <br>
 O segundo proposito secundario deste circuito é realizar tarefas de controle da estufa, como porta/ventuinha de ventilação
+
+## Circuito de alimentação da ventoinha
+<img src="images/Circuito fan.PNG">
+
+## Circuiuto de alimentação dos LEDs
+<img src="images/circuito led.PNG">
 
 ## Circuito de controle secundario
 <div align="center">
